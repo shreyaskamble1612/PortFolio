@@ -588,7 +588,7 @@ function Hero() {
             VIEW PROJECTS -&gt;
           </a>
           <a
-            href="https://linkedin.com/in/shreyaskamble"
+            href="https://www.linkedin.com/in/shreyas-kamble-aa465922a/"
             target="_blank"
             rel="noreferrer"
             style={{
@@ -1117,7 +1117,7 @@ function Contact() {
           <div style={{ display: "flex", justifyContent: "center", gap: 36, marginTop: 36, flexWrap: "wrap", position: "relative" }}>
             {[
               { label: "+91 8767206376", href: "tel:+918767206376", external: false },
-              { label: "LinkedIn", href: "https://linkedin.com/in/shreyaskamble", external: true },
+              { label: "LinkedIn", href: "https://www.linkedin.com/in/shreyas-kamble-aa465922a/", external: true },
               { label: "GitHub", href: "https://github.com/shreyaskamble1612", external: true },
             ].map(({ label, href, external }) => (
               <a
