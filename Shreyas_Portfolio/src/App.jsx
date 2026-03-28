@@ -424,8 +424,48 @@ function SkillsMarquee(){
 ══════════════════════════════════════════ */
 function Contact(){
   const [sent,setSent]=useState(false);
+  const [sending,setSending]=useState(false);
+  const [error,setError]=useState("");
   const [form,setForm]=useState({name:"",email:"",msg:""});
   const inp={width:"100%",background:"rgba(255,255,255,.03)",border:"1px solid rgba(255,255,255,.08)",borderRadius:8,padding:"13px 15px",fontFamily:"'Exo 2',sans-serif",fontSize:14,color:"#fff",outline:"none",transition:"border-color .2s"};
+
+  const handleSubmit=async(e)=>{
+    e.preventDefault();
+    if(sending) return;
+
+    setError("");
+    setSending(true);
+    try{
+      const res=await fetch("https://formsubmit.co/ajax/shreyaskamble6671@gmail.com",{
+        method:"POST",
+        headers:{
+          "Content-Type":"application/json",
+          Accept:"application/json"
+        },
+        body:JSON.stringify({
+          name:form.name,
+          email:form.email,
+          message:form.msg,
+          _subject:"New portfolio contact message",
+          _captcha:"false",
+          _template:"table"
+        })
+      });
+
+      const data=await res.json();
+      if(!res.ok || data?.success!=="true"){
+        throw new Error(data?.message || "Failed to send message");
+      }
+
+      setSent(true);
+      setForm({name:"",email:"",msg:""});
+    }catch(err){
+      setError("Message could not be sent. Please try again or email me directly at shreyaskamble6671@gmail.com.");
+    }finally{
+      setSending(false);
+    }
+  };
+
   return(
     <Section id="contact">
       <Heading eyebrow="// GET IN TOUCH" title="Contact" accent="Me"/>
@@ -455,27 +495,28 @@ function Contact(){
               <div style={{fontFamily:"'Exo 2',sans-serif",fontSize:13.5,color:"rgba(180,205,230,.62)"}}>I'll reply within 24 hours.</div>
             </div>
           ):(
-            <div style={{display:"flex",flexDirection:"column",gap:16}}>
+            <form onSubmit={handleSubmit} style={{display:"flex",flexDirection:"column",gap:16}}>
               {[{k:"name",l:"YOUR NAME",ph:"Shreyas Kamble"},{k:"email",l:"YOUR EMAIL",ph:"hello@example.com"}].map(f=>(
                 <div key={f.k}>
                   <div style={{fontFamily:"'Orbitron',sans-serif",fontSize:7,color:"rgba(255,255,255,.26)",letterSpacing:2,marginBottom:7}}>{f.l}</div>
-                  <input value={form[f.k]} onChange={e=>setForm(p=>({...p,[f.k]:e.target.value}))} placeholder={f.ph} style={inp}
+                  <input type={f.k==="email"?"email":"text"} required value={form[f.k]} onChange={e=>setForm(p=>({...p,[f.k]:e.target.value}))} placeholder={f.ph} style={inp}
                     onFocus={e=>e.target.style.borderColor="rgba(0,212,255,.4)"}
                     onBlur={e=>e.target.style.borderColor="rgba(255,255,255,.08)"}/>
                 </div>
               ))}
               <div>
                 <div style={{fontFamily:"'Orbitron',sans-serif",fontSize:7,color:"rgba(255,255,255,.26)",letterSpacing:2,marginBottom:7}}>MESSAGE</div>
-                <textarea value={form.msg} onChange={e=>setForm(p=>({...p,msg:e.target.value}))} placeholder="Tell me about your project..." rows={4} style={{...inp,resize:"vertical"}}
+                <textarea required value={form.msg} onChange={e=>setForm(p=>({...p,msg:e.target.value}))} placeholder="Tell me about your project..." rows={4} style={{...inp,resize:"vertical"}}
                   onFocus={e=>e.target.style.borderColor="rgba(0,212,255,.4)"}
                   onBlur={e=>e.target.style.borderColor="rgba(255,255,255,.08)"}/>
               </div>
-              <button onClick={()=>setSent(true)} style={{fontFamily:"'Orbitron',sans-serif",fontSize:9,letterSpacing:2,fontWeight:700,color:"#050914",background:"linear-gradient(135deg,#00D4FF,#00F5C4)",border:"none",padding:"15px",borderRadius:8,cursor:"pointer",boxShadow:"0 0 38px rgba(0,212,255,.4)",transition:"all .25s"}}
+              {error&&<div style={{fontFamily:"'Exo 2',sans-serif",fontSize:12.5,color:"#ff7c7c",lineHeight:1.5}}>{error}</div>}
+              <button type="submit" disabled={sending} style={{fontFamily:"'Orbitron',sans-serif",fontSize:9,letterSpacing:2,fontWeight:700,color:"#050914",background:"linear-gradient(135deg,#00D4FF,#00F5C4)",border:"none",padding:"15px",borderRadius:8,cursor:sending?"not-allowed":"pointer",opacity:sending?.72:1,boxShadow:"0 0 38px rgba(0,212,255,.4)",transition:"all .25s"}}
                 onMouseEnter={e=>{e.target.style.boxShadow="0 0 62px rgba(0,212,255,.75)";e.target.style.transform="translateY(-2px)";}}
                 onMouseLeave={e=>{e.target.style.boxShadow="0 0 38px rgba(0,212,255,.4)";e.target.style.transform="";}}>
-                SEND MESSAGE ✉
+                {sending?"SENDING...":"SEND MESSAGE ✉"}
               </button>
-            </div>
+            </form>
           )}
         </div>
       </div>
